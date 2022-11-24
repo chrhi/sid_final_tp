@@ -12,14 +12,16 @@ public class Bdd {
 	PreparedStatement pst;
 	ResultSet rs;
 
-	Bdd() throws ClassNotFoundException, SQLException {
+	public Bdd() throws ClassNotFoundException, SQLException {
 
+		// Class.forName("com.mysql.cj.jdbc.Driver");
+		// com.mysql.cj.jdbc.Driver
 		Class.forName("com.mysql.cj.jdbc.Driver");
-		this.con = DriverManager.getConnection("jdbc:mysql://localhost/sid_expose", "root", "");
+		this.con = DriverManager.getConnection("jdbc:mysql://localhost:3306/sid_expose", "root", "");
 
 	}
 
-	public void push(String firstName, String lastName, String day, String deg) throws SQLException {
+	public void insert(String firstName, String lastName, String day, String deg) throws SQLException {
 		this.pst = con.prepareStatement("insert into patient(day,first_name,last_name,temp)values(?,?,?,?)");
 		pst.setString(1, day);
 		pst.setString(2, firstName);
@@ -28,7 +30,7 @@ public class Bdd {
 		pst.executeUpdate();
 	}
 
-	public ResultSet getData() throws SQLException {
+	public ResultSet selectAll() throws SQLException {
 		pst = con.prepareStatement("select * from patient");
 		rs = pst.executeQuery();
 		return rs;
