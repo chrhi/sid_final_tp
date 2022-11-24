@@ -14,8 +14,7 @@ public class Bdd {
 
 	public Bdd() throws ClassNotFoundException, SQLException {
 
-		// Class.forName("com.mysql.cj.jdbc.Driver");
-		// com.mysql.cj.jdbc.Driver
+
 		Class.forName("com.mysql.cj.jdbc.Driver");
 		this.con = DriverManager.getConnection("jdbc:mysql://localhost:3306/sid_expose", "root", "");
 
