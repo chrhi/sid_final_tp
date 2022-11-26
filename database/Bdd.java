@@ -14,7 +14,6 @@ public class Bdd {
 
 	public Bdd() throws ClassNotFoundException, SQLException {
 
-
 		Class.forName("com.mysql.cj.jdbc.Driver");
 		this.con = DriverManager.getConnection("jdbc:mysql://localhost:3306/sid_expose", "root", "");
 
@@ -32,6 +31,7 @@ public class Bdd {
 	public ResultSet selectAll() throws SQLException {
 		pst = con.prepareStatement("select * from patient");
 		rs = pst.executeQuery();
+		System.out.println(rs);
 		return rs;
 	}
 

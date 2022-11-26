@@ -11,7 +11,7 @@ public class Server {
         System.setProperty("java.rmi.server.hostname", "127.0.0.1");
 
         HandlePatient abdullah = new HandlePatient();
-        System.out.println("the server is running on port 2023");
+        System.out.println("connected to database successfully  ✅✅✅");
         rukia = (Patient) UnicastRemoteObject.exportObject(abdullah, 1);
         Registry registry = LocateRegistry.createRegistry(2023);
         registry.bind("chehri", rukia);

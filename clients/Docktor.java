@@ -41,7 +41,7 @@ public class Docktor {
                 while (true) {
                     String message = inReader.readLine();
                     if (message != null) {
-                        out.println(message);
+                        out.println("doctor 👨‍⚕️ :" + message);
                     }
                 }
 

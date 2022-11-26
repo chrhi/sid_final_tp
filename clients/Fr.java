@@ -4,12 +4,15 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.io.Serializable;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Scanner;
 
 import server.Patient;
@@ -20,9 +23,11 @@ public class Fr {
 
 	private PrintWriter out;
 
+	private Patient abdullah;
+
 	public void start() throws NotBoundException, UnknownHostException, IOException {
 		Registry yasuo = LocateRegistry.getRegistry("127.0.0.1", 2023);
-		Patient abdullah = (Patient) yasuo.lookup("chehri");
+		this.abdullah = (Patient) yasuo.lookup("chehri");
 
 		// abdullah.push("ah","saha","manandnd","33");
 		try {
@@ -44,21 +49,47 @@ public class Fr {
 	}
 
 	class InputHandler implements Runnable {
+		BufferedReader inReader;
 
 		@Override
 		public void run() {
 			try {
-				BufferedReader inReader = new BufferedReader(new InputStreamReader(System.in));
+				this.inReader = new BufferedReader(new InputStreamReader(System.in));
 				while (true) {
 					String message = inReader.readLine();
-					if (message != null) {
-						out.println(message);
+
+					if (message.equals("report")) {
+						reportPatient();
+					} else {
+						out.println("nurse 👩‍⚕️ : " + message);
 					}
 				}
 
 			} catch (IOException err) {
 				System.out.println(err.getMessage());
 			}
+
+		}
+
+		public void reportPatient() throws IOException {
+			String deg, name, lastName, date;
+
+			System.out.println("reporting new patient ... 😷 ⚕️");
+			System.out.println("deg : 💜 ");
+			deg = inReader.readLine();
+
+			System.out.println("first name : 💜 ");
+			name = inReader.readLine();
+
+			System.out.println("after name : 💜 ");
+			lastName = inReader.readLine();
+
+			DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+			LocalDateTime now = LocalDateTime.now();
+			date = dtf.format(now);
+
+			abdullah.push(name, lastName, date, deg);
+			System.out.println("patient added successfully ✅✅✅");
 
 		}
 
