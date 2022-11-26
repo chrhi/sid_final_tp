@@ -6,40 +6,55 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.Scanner;
+import java.rmi.NotBoundException;
 
 public class Docktor {
-    ServerSocket provider;
-    Socket connection;
-    BufferedReader in;
-    PrintWriter out;
 
-    void start() throws IOException {
-        provider = new ServerSocket(4000);
+    ServerSocket server;
+    Socket client;
+    private BufferedReader in;
 
-        connection = provider.accept();
-        in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-        out = new PrintWriter(connection.getOutputStream(), true);
+    private PrintWriter out;
 
-        Scanner input = new Scanner(System.in);
+    public void start() throws NotBoundException, IOException {
+        this.server = new ServerSocket(9000);
+        this.client = this.server.accept();
+        this.out = new PrintWriter(client.getOutputStream(), true);
+        in = new BufferedReader(new InputStreamReader(client.getInputStream()));
 
-        while (true) {
-            String messageIn = in.readLine();
-            if (messageIn != null) {
-                System.out.println(messageIn);
-            }
-
-            String messageout = input.nextLine();
-            if (messageout != null) {
-                out.println(messageout);
-            }
+        InputHandler inHandler = new InputHandler();
+        Thread t = new Thread(inHandler);
+        t.start();
+        String inMessage;
+        while ((inMessage = in.readLine()) != null) {
+            System.out.println(inMessage);
         }
 
     }
 
-    public static void main(String[] args) throws IOException {
-        Docktor docktor = new Docktor();
-        docktor.start();
+    class InputHandler implements Runnable {
+
+        @Override
+        public void run() {
+            try {
+                BufferedReader inReader = new BufferedReader(new InputStreamReader(System.in));
+                while (true) {
+                    String message = inReader.readLine();
+                    if (message != null) {
+                        out.println(message);
+                    }
+                }
+
+            } catch (IOException err) {
+                System.out.println(err.getMessage());
+            }
+
+        }
+
     }
 
+    public static void main(String[] args) throws NotBoundException, IOException {
+        Docktor salah = new Docktor();
+        salah.start();
+    }
 }

@@ -15,28 +15,58 @@ import java.util.Scanner;
 import server.Patient;
 
 public class Fr {
-	public static void main(String[] args) throws NotBoundException, UnknownHostException, IOException {
+
+	private BufferedReader in;
+
+	private PrintWriter out;
+
+	public void start() throws NotBoundException, UnknownHostException, IOException {
 		Registry yasuo = LocateRegistry.getRegistry("127.0.0.1", 2023);
 		Patient abdullah = (Patient) yasuo.lookup("chehri");
 
 		// abdullah.push("ah","saha","manandnd","33");
-		Socket connection = new Socket("127.0.0.1", 4000);
-		BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-		PrintWriter out = new PrintWriter(connection.getOutputStream());
+		try {
+			Socket client = new Socket("127.0.0.1", 9000);
+			this.out = new PrintWriter(client.getOutputStream(), true);
+			in = new BufferedReader(new InputStreamReader(client.getInputStream()));
 
-		Scanner input = new Scanner(System.in);
-
-		while (true) {
-			String messageOut = input.nextLine();
-			if (messageOut != null) {
-				out.println(messageOut);
+			InputHandler inHandler = new InputHandler();
+			Thread t = new Thread(inHandler);
+			t.start();
+			String inMessage;
+			while ((inMessage = in.readLine()) != null) {
+				System.out.println(inMessage);
 			}
-			String messageIn = in.readLine();
-			if (messageIn != null) {
-				System.out.println(messageIn);
+
+		} catch (IOException error) {
+			System.out.println(error.getMessage());
+		}
+	}
+
+	class InputHandler implements Runnable {
+
+		@Override
+		public void run() {
+			try {
+				BufferedReader inReader = new BufferedReader(new InputStreamReader(System.in));
+				while (true) {
+					String message = inReader.readLine();
+					if (message != null) {
+						out.println(message);
+					}
+				}
+
+			} catch (IOException err) {
+				System.out.println(err.getMessage());
 			}
 
 		}
+
+	}
+
+	public static void main(String[] args) throws UnknownHostException, NotBoundException, IOException {
+		Fr client = new Fr();
+		client.start();
 	}
 
 }
